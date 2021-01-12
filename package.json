@@ -1,0 +1,26 @@
+{
+  "name": "torilang",
+  "version": "0.0.1",
+  "description": "ToriChan's new programming language",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon src/main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YUUKIToriyama/toriLang.git"
+  },
+  "keywords": [
+    "torilang"
+  ],
+  "author": "YUUKIToriyama",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/YUUKIToriyama/toriLang/issues"
+  },
+  "homepage": "https://github.com/YUUKIToriyama/toriLang#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
