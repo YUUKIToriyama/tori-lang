@@ -20,10 +20,10 @@ const parser = (tokens) => {
 				case "Sum": {
 					expression.name = "Sum";
 					// トークン列を読み進め次を参照する
-					let arguments = [tokens.shift(), tokens.shift()];
-					if (arguments.every(_argument => ["integer", "float"].includes(_argument.type))) {
+					let args = [tokens.shift(), tokens.shift()];
+					if (args.every(_argument => ["integer", "float"].includes(_argument.type))) {
 						// 2つがいずれも数であれば引数情報を変数expressionに格納
-						expression.arguments = arguments;
+						expression.arguments = args;
 						// expressionオブジェクトをASTのbodyに追加
 						AST.body.push(expression);
 					} else {
@@ -35,10 +35,10 @@ const parser = (tokens) => {
 				case "Sub": {
 					expression.name = "Sub";
 					// トークン列を読み進め次を参照する
-					let arguments = [tokens.shift(), tokens.shift()];
-					if (arguments.every(_argument => ["integer", "float"].includes(_argument.type))) {
+					let args = [tokens.shift(), tokens.shift()];
+					if (args.every(_argument => ["integer", "float"].includes(_argument.type))) {
 						// 2つがいずれも数であれば引数情報を変数expressionに格納
-						expression.arguments = arguments;
+						expression.arguments = args;
 						// expressionオブジェクトをASTのbodyに追加
 						AST.body.push(expression);
 					} else {
@@ -50,10 +50,10 @@ const parser = (tokens) => {
 				case "Mul": {
 					expression.name = "Mul";
 					// トークン列を読み進め次を参照する
-					let arguments = [tokens.shift(), tokens.shift()];
-					if (arguments.every(_argument => ["integer", "float"].includes(_argument.type))) {
+					let args = [tokens.shift(), tokens.shift()];
+					if (args.every(_argument => ["integer", "float"].includes(_argument.type))) {
 						// 2つがいずれも数であれば引数情報を変数expressionに格納
-						expression.arguments = arguments;
+						expression.arguments = args;
 						// expressionオブジェクトをASTのbodyに追加
 						AST.body.push(expression);
 					} else {
@@ -65,14 +65,14 @@ const parser = (tokens) => {
 				case "Div": {
 					expression.name = "Div";
 					// トークン列を読み進め次を参照する
-					let arguments = [tokens.shift(), tokens.shift()];
-					if (arguments[1].value === 0) {
+					let args = [tokens.shift(), tokens.shift()];
+					if (args[1].value === 0) {
 						// ゼロでは割れない 
 						throw new Error("zero devide");
 					} else {
-						if (arguments.every(_argument => ["integer", "float"].includes(_argument.type))) {
+						if (args.every(_argument => ["integer", "float"].includes(_argument.type))) {
 							// 2つがいずれも数であれば引数情報を変数expressionに格納
-							expression.arguments = arguments;
+							expression.arguments = args;
 							// expressionオブジェクトをASTのbodyに追加
 							AST.body.push(expression);
 						} else {
