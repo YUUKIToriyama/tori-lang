@@ -1,12 +1,6 @@
-const { TestScheduler } = require('jest');
 const TypeChecker = require("../TypeChecker");
 
 describe("TypeChecker", () => {
-	describe("isCommand()", () => {
-		test("isCommand", () => {
-			expect(TypeChecker.isCommand("Sum")).toBe(true);
-		});
-	});
 	describe("isInteger()", () => {
 		test("isInteger", () => {
 			expect(TypeChecker.isInteger("1234500")).toBe(true);
