@@ -6,6 +6,14 @@ fn is_letter(character: char) -> bool {
     character.is_ascii_alphabetic() || character == '_'
 }
 
+fn lookup_identifier_type(literal: &str) -> TokenType {
+    match literal {
+        "let" => TokenType::LET,
+        "fn" => TokenType::FUNCTION,
+        _ => TokenType::IDENT,
+    }
+}
+
 struct Lexer {
     input: String,
     position: usize,
@@ -33,6 +41,9 @@ impl Lexer {
     }
 
     fn get_next_token(&mut self) -> Token {
+        if self.current_character.is_whitespace() {
+            self.read_next();
+        }
         let token = match self.current_character {
             '=' => Token::new(TokenType::ASSIGN, "=".to_string()),
             ';' => Token::new(TokenType::SEMICOLON, ";".to_string()),
@@ -48,7 +59,9 @@ impl Lexer {
                     pending_characters.push(self.current_character);
                     self.read_next();
                 }
-                Token::new(TokenType::IDENT, pending_characters.into_iter().collect())
+                let literal: String = pending_characters.iter().collect();
+                let token_type = lookup_identifier_type(&literal);
+                Token::new(token_type, literal)
             }
         };
         self.read_next();
