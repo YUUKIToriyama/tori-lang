@@ -22,10 +22,10 @@ pub struct Token {
 }
 
 impl Token {
-    pub fn new(token_type: TokenType, character: char) -> Token {
+    pub fn new(token_type: TokenType, literal: String) -> Token {
         Token {
             token_type,
-            literal: character.to_string(),
+            literal,
         }
     }
 }
@@ -36,7 +36,7 @@ mod tests_for_token {
 
     #[test]
     fn test_new() {
-        let token = Token::new(TokenType::COMMA, ',');
+        let token = Token::new(TokenType::COMMA, ",".to_string());
         assert_eq!(token.token_type, TokenType::COMMA);
         assert_eq!(token.literal, ",");
     }
