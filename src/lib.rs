@@ -2,6 +2,10 @@ mod token;
 
 use crate::token::{Token, TokenType};
 
+fn is_letter(character: char) -> bool {
+    character.is_ascii_alphabetic() || character == '_'
+}
+
 struct Lexer {
     input: String,
     position: usize,
@@ -30,15 +34,22 @@ impl Lexer {
 
     fn get_next_token(&mut self) -> Token {
         let token = match self.current_character {
-            '=' => Token::new(TokenType::ASSIGN, '='),
-            ';' => Token::new(TokenType::SEMICOLON, ';'),
-            '(' => Token::new(TokenType::LPAREN, '('),
-            ')' => Token::new(TokenType::RPAREN, ')'),
-            ',' => Token::new(TokenType::COMMA, ','),
-            '+' => Token::new(TokenType::PLUS, '+'),
-            '{' => Token::new(TokenType::LBRACE, '{'),
-            '}' => Token::new(TokenType::RBRACE, '}'),
-            _ => Token::new(TokenType::EOF, '\0'),
+            '=' => Token::new(TokenType::ASSIGN, "=".to_string()),
+            ';' => Token::new(TokenType::SEMICOLON, ";".to_string()),
+            '(' => Token::new(TokenType::LPAREN, "(".to_string()),
+            ')' => Token::new(TokenType::RPAREN, ")".to_string()),
+            ',' => Token::new(TokenType::COMMA, ",".to_string()),
+            '+' => Token::new(TokenType::PLUS, "+".to_string()),
+            '{' => Token::new(TokenType::LBRACE, "{".to_string()),
+            '}' => Token::new(TokenType::RBRACE, "}".to_string()),
+            _ => {
+                let mut pending_characters: Vec<char> = vec![];
+                while is_letter(self.current_character) {
+                    pending_characters.push(self.current_character);
+                    self.read_next();
+                }
+                Token::new(TokenType::IDENT, pending_characters.into_iter().collect())
+            }
         };
         self.read_next();
         token
