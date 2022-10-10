@@ -32,7 +32,7 @@ impl Token {
 
 #[cfg(test)]
 mod tests_for_token {
-    use crate::{Token, TokenType};
+    use crate::token::{Token, TokenType};
 
     #[test]
     fn test_new() {
