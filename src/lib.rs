@@ -68,7 +68,13 @@ impl Lexer {
                     let token_type: TokenType = lookup_identifier_type(&literal);
                     Token::new(token_type, literal)
                 } else if is_digit(other) {
-                    Token::new(TokenType::INT, other.to_string())
+                    let mut pending: Vec<char> = vec![];
+                    while is_digit(self.current_character) {
+                        pending.push(self.current_character);
+                        self.read_next();
+                    }
+                    let literal: String = pending.iter().collect();
+                    Token::new(TokenType::INT, literal)
                 } else {
                     Token::new(TokenType::ILLEGAL, other.to_string())
                 }
