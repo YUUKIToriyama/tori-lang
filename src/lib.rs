@@ -83,10 +83,21 @@ mod tests_for_lexer {
 
     #[test]
     fn test_get_next_token() {
-        let mut lexer = Lexer::new("=;(),+{}");
+        let mut lexer = Lexer::new("let x = y;");
         let mut token = lexer.get_next_token();
+        assert_eq!(token.literal, "let");
+        assert_eq!(token.token_type, TokenType::LET);
+        token = lexer.get_next_token();
+        assert_eq!(token.literal, "x");
+        assert_eq!(token.token_type, TokenType::IDENT);
+        token = lexer.get_next_token();
+        assert_eq!(token.literal, "=");
         assert_eq!(token.token_type, TokenType::ASSIGN);
         token = lexer.get_next_token();
+        assert_eq!(token.literal, "y");
+        assert_eq!(token.token_type, TokenType::IDENT);
+        token = lexer.get_next_token();
+        assert_eq!(token.literal, ";");
         assert_eq!(token.token_type, TokenType::SEMICOLON);
     }
 }
