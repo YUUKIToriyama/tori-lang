@@ -6,6 +6,10 @@ fn is_letter(character: char) -> bool {
     character.is_ascii_alphabetic() || character == '_'
 }
 
+fn is_digit(character: char) -> bool {
+    character.is_ascii_digit()
+}
+
 fn lookup_identifier_type(literal: &str) -> TokenType {
     match literal {
         "let" => TokenType::LET,
@@ -53,15 +57,21 @@ impl Lexer {
             '+' => Token::new(TokenType::PLUS, "+".to_string()),
             '{' => Token::new(TokenType::LBRACE, "{".to_string()),
             '}' => Token::new(TokenType::RBRACE, "}".to_string()),
-            _ => {
-                let mut pending_characters: Vec<char> = vec![];
-                while is_letter(self.current_character) {
-                    pending_characters.push(self.current_character);
-                    self.read_next();
+            other => {
+                if is_letter(other) {
+                    let mut pending: Vec<char> = vec![];
+                    while is_letter(self.current_character) {
+                        pending.push(self.current_character);
+                        self.read_next();
+                    }
+                    let literal: String = pending.iter().collect();
+                    let token_type: TokenType = lookup_identifier_type(&literal);
+                    Token::new(token_type, literal)
+                } else if is_digit(other) {
+                    Token::new(TokenType::INT, other.to_string())
+                } else {
+                    Token::new(TokenType::ILLEGAL, other.to_string())
                 }
-                let literal: String = pending_characters.iter().collect();
-                let token_type = lookup_identifier_type(&literal);
-                Token::new(token_type, literal)
             }
         };
         self.read_next();
@@ -83,7 +93,7 @@ mod tests_for_lexer {
 
     #[test]
     fn test_get_next_token() {
-        let mut lexer = Lexer::new("let x = y;");
+        let mut lexer = Lexer::new("let x = 12;");
         let mut token = lexer.get_next_token();
         assert_eq!(token.literal, "let");
         assert_eq!(token.token_type, TokenType::LET);
@@ -94,8 +104,11 @@ mod tests_for_lexer {
         assert_eq!(token.literal, "=");
         assert_eq!(token.token_type, TokenType::ASSIGN);
         token = lexer.get_next_token();
-        assert_eq!(token.literal, "y");
-        assert_eq!(token.token_type, TokenType::IDENT);
+        assert_eq!(token.literal, "1");
+        assert_eq!(token.token_type, TokenType::INT);
+        token = lexer.get_next_token();
+        assert_eq!(token.literal, "2");
+        assert_eq!(token.token_type, TokenType::INT);
         token = lexer.get_next_token();
         assert_eq!(token.literal, ";");
         assert_eq!(token.token_type, TokenType::SEMICOLON);
