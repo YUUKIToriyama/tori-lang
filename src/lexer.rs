@@ -16,7 +16,7 @@ fn lookup_identifier_type(literal: &str) -> TokenType {
     }
 }
 
-struct Lexer {
+pub struct Lexer {
     input: String,
     position: usize,
     position_next: usize,
@@ -24,7 +24,7 @@ struct Lexer {
 }
 
 impl Lexer {
-    fn new(input: &str) -> Lexer {
+    pub fn new(input: &str) -> Lexer {
         let current = input.chars().nth(0).unwrap();
         Lexer {
             input: input.to_string(),
@@ -34,15 +34,19 @@ impl Lexer {
         }
     }
 
-    fn read_next(&mut self) {
-        if self.position_next < self.input.len() {
+    pub fn has_next(&self) -> bool {
+        self.position_next < self.input.len()
+    }
+
+    pub fn read_next(&mut self) {
+        if self.has_next() {
             self.current_character = self.input.chars().nth(self.position_next).unwrap();
         }
         self.position = self.position_next;
         self.position_next = self.position_next + 1;
     }
 
-    fn get_next_token(&mut self) -> Token {
+    pub fn get_next_token(&mut self) -> Token {
         if self.current_character.is_whitespace() {
             self.read_next();
         }

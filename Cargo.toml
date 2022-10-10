@@ -6,10 +6,11 @@ version = "0.1.0"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
+name = "compiler"
 path = "src/lib.rs"
 
 [[bin]]
 name = "repl"
-path = "src/bin.rs"
+path = "src/main.rs"
 
 [dependencies]

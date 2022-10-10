@@ -1,5 +1,4 @@
-mod repl;
-use repl::Repl;
+use compiler::repl::Repl;
 
 fn main() {
     let mut repl = Repl::new(std::io::stdin(), std::io::stdout());

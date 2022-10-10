@@ -16,6 +16,7 @@ pub enum TokenType {
     LET,       // 変数宣言キーワード
 }
 
+#[derive(Debug)]
 pub struct Token {
     pub token_type: TokenType,
     pub literal: String,
