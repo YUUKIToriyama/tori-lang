@@ -104,10 +104,7 @@ mod tests_for_lexer {
         assert_eq!(token.literal, "=");
         assert_eq!(token.token_type, TokenType::ASSIGN);
         token = lexer.get_next_token();
-        assert_eq!(token.literal, "1");
-        assert_eq!(token.token_type, TokenType::INT);
-        token = lexer.get_next_token();
-        assert_eq!(token.literal, "2");
+        assert_eq!(token.literal, "12");
         assert_eq!(token.token_type, TokenType::INT);
         token = lexer.get_next_token();
         assert_eq!(token.literal, ";");
