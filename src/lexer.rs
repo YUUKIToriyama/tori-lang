@@ -51,6 +51,14 @@ impl Lexer {
         self.position_next = self.position_next + 1;
     }
 
+    fn back_to_prev(&mut self) {
+        if self.position > 0 {
+            self.current_character = self.input.chars().nth(self.position - 1).unwrap();
+        }
+        self.position = self.position - 1;
+        self.position_next = self.position_next - 1;
+    }
+
     pub fn get_next_token(&mut self) -> Token {
         if self.current_character.is_whitespace() {
             self.read_next();
@@ -77,6 +85,9 @@ impl Lexer {
                         pending.push(self.current_character);
                         self.read_next();
                     }
+                    if is_letter(self.current_character) == false {
+                        self.back_to_prev();
+                    }
                     let literal: String = pending.iter().collect();
                     let token_type: TokenType = lookup_identifier_type(&literal);
                     Token::new(token_type, literal)
@@ -85,6 +96,9 @@ impl Lexer {
                     while is_digit(self.current_character) {
                         pending.push(self.current_character);
                         self.read_next();
+                    }
+                    if is_digit(self.current_character) == false {
+                        self.back_to_prev();
                     }
                     let literal: String = pending.iter().collect();
                     Token::new(TokenType::INT, literal)
@@ -132,7 +146,7 @@ mod tests_for_lexer {
 
     #[test]
     fn test_get_next_token_2() {
-        let mut lexer = Lexer::new("!(10 + 23 > 10 * 2 - 4)");
+        let mut lexer = Lexer::new("!(10 + 23 > 10 * 2 - 4)1");
         let mut token = lexer.get_next_token();
         assert_eq!(token.literal, "!");
         assert_eq!(token.token_type, TokenType::BANG);
