@@ -12,6 +12,11 @@ fn lookup_identifier_type(literal: &str) -> TokenType {
     match literal {
         "let" => TokenType::LET,
         "fn" => TokenType::FUNCTION,
+        "true" => TokenType::TRUE,
+        "false" => TokenType::FALSE,
+        "if" => TokenType::IF,
+        "else" => TokenType::ELSE,
+        "return" => TokenType::RETURN,
         _ => TokenType::IDENT,
     }
 }
@@ -164,5 +169,50 @@ mod tests_for_lexer {
         token = lexer.get_next_token();
         assert_eq!(token.literal, ")");
         assert_eq!(token.token_type, TokenType::RPAREN);
+    }
+
+    #[test]
+    fn test_get_next_token_3() {
+        let code = "if (10 > 3) {
+                return true;
+            } else {
+                return false;
+            }
+        ";
+        let mut lexer = Lexer::new(code);
+        let mut token = lexer.get_next_token();
+        assert_eq!(token.token_type, TokenType::IF);
+        token = lexer.get_next_token();
+        assert_eq!(token.token_type, TokenType::LPAREN);
+        token = lexer.get_next_token();
+        assert_eq!(token.token_type, TokenType::INT);
+        token = lexer.get_next_token();
+        assert_eq!(token.token_type, TokenType::GT);
+        token = lexer.get_next_token();
+        assert_eq!(token.token_type, TokenType::INT);
+        token = lexer.get_next_token();
+        assert_eq!(token.token_type, TokenType::RPAREN);
+        token = lexer.get_next_token();
+        assert_eq!(token.token_type, TokenType::LBRACE);
+        token = lexer.get_next_token();
+        assert_eq!(token.token_type, TokenType::RETURN);
+        token = lexer.get_next_token();
+        assert_eq!(token.token_type, TokenType::TRUE);
+        token = lexer.get_next_token();
+        assert_eq!(token.token_type, TokenType::SEMICOLON);
+        token = lexer.get_next_token();
+        assert_eq!(token.token_type, TokenType::RBRACE);
+        token = lexer.get_next_token();
+        assert_eq!(token.token_type, TokenType::ELSE);
+        token = lexer.get_next_token();
+        assert_eq!(token.token_type, TokenType::LBRACE);
+        token = lexer.get_next_token();
+        assert_eq!(token.token_type, TokenType::RETURN);
+        token = lexer.get_next_token();
+        assert_eq!(token.token_type, TokenType::FALSE);
+        token = lexer.get_next_token();
+        assert_eq!(token.token_type, TokenType::SEMICOLON);
+        token = lexer.get_next_token();
+        assert_eq!(token.token_type, TokenType::RBRACE);
     }
 }

@@ -1,9 +1,11 @@
 #[derive(PartialEq, Debug)]
 pub enum TokenType {
-    ILLEGAL,   // 未知のトークン
-    EOF,       // ファイル終端
-    IDENT,     // 識別子
-    INT,       // 整数
+    ILLEGAL, // 未知のトークン
+    EOF,     // ファイル終端
+    IDENT,   // 識別子
+    INT,     // 整数
+
+    // 1文字トークン
     ASSIGN,    // イコール
     PLUS,      // 加算演算子
     MINUS,     // 減算演算子
@@ -18,8 +20,15 @@ pub enum TokenType {
     RPAREN,    // 右カッコ
     LBRACE,    // 左波括弧
     RBRACE,    // 右波括弧
-    FUNCTION,  // 関数キーワード
-    LET,       // 変数宣言キーワード
+
+    // キーワード
+    FUNCTION, // 関数キーワード
+    LET,      // 変数宣言キーワード
+    TRUE,     // 真
+    FALSE,    // 偽
+    IF,       // if
+    ELSE,     // else
+    RETURN,   // return
 }
 
 #[derive(Debug)]
