@@ -52,11 +52,17 @@ impl Lexer {
         }
         let token = match self.current_character {
             '=' => Token::new(TokenType::ASSIGN, "=".to_string()),
+            '+' => Token::new(TokenType::PLUS, "+".to_string()),
+            '-' => Token::new(TokenType::MINUS, "-".to_string()),
+            '!' => Token::new(TokenType::BANG, "!".to_string()),
+            '*' => Token::new(TokenType::ASTERISK, "*".to_string()),
+            '/' => Token::new(TokenType::SLASH, "/".to_string()),
+            '<' => Token::new(TokenType::LT, "<".to_string()),
+            '>' => Token::new(TokenType::GT, ">".to_string()),
             ';' => Token::new(TokenType::SEMICOLON, ";".to_string()),
             '(' => Token::new(TokenType::LPAREN, "(".to_string()),
             ')' => Token::new(TokenType::RPAREN, ")".to_string()),
             ',' => Token::new(TokenType::COMMA, ",".to_string()),
-            '+' => Token::new(TokenType::PLUS, "+".to_string()),
             '{' => Token::new(TokenType::LBRACE, "{".to_string()),
             '}' => Token::new(TokenType::RBRACE, "}".to_string()),
             other => {
@@ -117,5 +123,46 @@ mod tests_for_lexer {
         token = lexer.get_next_token();
         assert_eq!(token.literal, ";");
         assert_eq!(token.token_type, TokenType::SEMICOLON);
+    }
+
+    #[test]
+    fn test_get_next_token_2() {
+        let mut lexer = Lexer::new("!(10 + 23 > 10 * 2 - 4)");
+        let mut token = lexer.get_next_token();
+        assert_eq!(token.literal, "!");
+        assert_eq!(token.token_type, TokenType::BANG);
+        token = lexer.get_next_token();
+        assert_eq!(token.literal, "(");
+        assert_eq!(token.token_type, TokenType::LPAREN);
+        token = lexer.get_next_token();
+        assert_eq!(token.literal, "10");
+        assert_eq!(token.token_type, TokenType::INT);
+        token = lexer.get_next_token();
+        assert_eq!(token.literal, "+");
+        assert_eq!(token.token_type, TokenType::PLUS);
+        token = lexer.get_next_token();
+        assert_eq!(token.literal, "23");
+        assert_eq!(token.token_type, TokenType::INT);
+        token = lexer.get_next_token();
+        assert_eq!(token.literal, ">");
+        assert_eq!(token.token_type, TokenType::GT);
+        token = lexer.get_next_token();
+        assert_eq!(token.literal, "10");
+        assert_eq!(token.token_type, TokenType::INT);
+        token = lexer.get_next_token();
+        assert_eq!(token.literal, "*");
+        assert_eq!(token.token_type, TokenType::ASTERISK);
+        token = lexer.get_next_token();
+        assert_eq!(token.literal, "2");
+        assert_eq!(token.token_type, TokenType::INT);
+        token = lexer.get_next_token();
+        assert_eq!(token.literal, "-");
+        assert_eq!(token.token_type, TokenType::MINUS);
+        token = lexer.get_next_token();
+        assert_eq!(token.literal, "4");
+        assert_eq!(token.token_type, TokenType::INT);
+        token = lexer.get_next_token();
+        assert_eq!(token.literal, ")");
+        assert_eq!(token.token_type, TokenType::RPAREN);
     }
 }

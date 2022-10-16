@@ -6,6 +6,12 @@ pub enum TokenType {
     INT,       // 整数
     ASSIGN,    // イコール
     PLUS,      // 加算演算子
+    MINUS,     // 減算演算子
+    BANG,      // エクスクラメーションマーク
+    ASTERISK,  // アスタリスク
+    SLASH,     // スラッシュ
+    LT,        // 小なり
+    GT,        // 大なり
     COMMA,     // コンマ
     SEMICOLON, // セミコロン
     LPAREN,    // 左カッコ
