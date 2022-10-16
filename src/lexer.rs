@@ -60,8 +60,8 @@ impl Lexer {
     }
 
     pub fn get_next_token(&mut self) -> Token {
-        if self.current_character.is_whitespace() {
-            self.read_next();
+        while self.current_character.is_whitespace() {
+            self.read_next()
         }
         let token = match self.current_character {
             '=' => Token::new(TokenType::ASSIGN, "=".to_string()),
@@ -187,9 +187,10 @@ mod tests_for_lexer {
 
     #[test]
     fn test_get_next_token_3() {
-        let code = "if (10 > 3) {
+        let code = "
+            if (10 > 3) {
                 return true;
-            } else {
+            } else { 
                 return false;
             }
         ";
