@@ -51,12 +51,13 @@ impl Lexer {
         self.position_next = self.position_next + 1;
     }
 
-    fn back_to_prev(&mut self) {
-        if self.position > 0 {
-            self.current_character = self.input.chars().nth(self.position - 1).unwrap();
+    fn peek_next(&self) -> Option<char> {
+        if self.has_next() {
+            let next_character = self.input.chars().nth(self.position + 1).unwrap();
+            Some(next_character)
+        } else {
+            None
         }
-        self.position = self.position - 1;
-        self.position_next = self.position_next - 1;
     }
 
     pub fn get_next_token(&mut self) -> Token {
@@ -64,26 +65,24 @@ impl Lexer {
             self.read_next()
         }
         let token = match self.current_character {
-            '=' => {
-                self.read_next();
-                if self.current_character == '=' {
+            '=' => match self.peek_next() {
+                Some('=') => {
+                    self.read_next();
                     Token::new(TokenType::EQ, "==".to_string())
-                } else {
-                    self.back_to_prev();
-                    Token::new(TokenType::ASSIGN, "=".to_string())
                 }
-            }
+                Some(_) => Token::new(TokenType::ASSIGN, "=".to_string()),
+                None => Token::new(TokenType::EOF, "".to_string()),
+            },
             '+' => Token::new(TokenType::PLUS, "+".to_string()),
             '-' => Token::new(TokenType::MINUS, "-".to_string()),
-            '!' => {
-                self.read_next();
-                if self.current_character == '=' {
+            '!' => match self.peek_next() {
+                Some('=') => {
+                    self.read_next();
                     Token::new(TokenType::NOTEQ, "!=".to_string())
-                } else {
-                    self.back_to_prev();
-                    Token::new(TokenType::BANG, "!".to_string())
                 }
-            }
+                Some(_) => Token::new(TokenType::BANG, "!".to_string()),
+                None => Token::new(TokenType::EOF, "".to_string()),
+            },
             '*' => Token::new(TokenType::ASTERISK, "*".to_string()),
             '/' => Token::new(TokenType::SLASH, "/".to_string()),
             '<' => Token::new(TokenType::LT, "<".to_string()),
@@ -99,10 +98,17 @@ impl Lexer {
                     let mut pending: Vec<char> = vec![];
                     while is_letter(self.current_character) {
                         pending.push(self.current_character);
-                        self.read_next();
-                    }
-                    if is_letter(self.current_character) == false {
-                        self.back_to_prev();
+                        match self.peek_next() {
+                            None => break,
+                            Some(v) => {
+                                if is_letter(v) {
+                                    self.read_next();
+                                    continue;
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
                     }
                     let literal: String = pending.iter().collect();
                     let token_type: TokenType = lookup_identifier_type(&literal);
@@ -111,10 +117,17 @@ impl Lexer {
                     let mut pending: Vec<char> = vec![];
                     while is_digit(self.current_character) {
                         pending.push(self.current_character);
-                        self.read_next();
-                    }
-                    if is_digit(self.current_character) == false {
-                        self.back_to_prev();
+                        match self.peek_next() {
+                            None => break,
+                            Some(v) => {
+                                if is_digit(v) {
+                                    self.read_next();
+                                    continue;
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
                     }
                     let literal: String = pending.iter().collect();
                     Token::new(TokenType::INT, literal)
