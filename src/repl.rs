@@ -1,5 +1,5 @@
 use crate::lexer::Lexer;
-use crate::token::Token;
+use crate::token::{Token, TokenType};
 use std::io::Write;
 
 pub struct Repl {
@@ -21,10 +21,12 @@ impl Repl {
         while self.stdin.read_line(&mut input).is_ok() {
             let mut lexer = Lexer::new(&input);
             let mut tokens: Vec<Token> = vec![];
-            while lexer.has_next() {
-                tokens.push(lexer.get_next_token());
-                lexer.read_next();
+            let mut token = lexer.get_next_token();
+            while token.token_type != TokenType::EOF {
+                tokens.push(token);
+                token = lexer.get_next_token();
             }
+            tokens.push(token);
             print!("{:?}\n{}", tokens, PROMPT);
             self.stdout.flush().unwrap();
             input.clear();
