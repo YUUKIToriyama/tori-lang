@@ -1,7 +1,10 @@
 [package]
 authors = ["Yuuki Toriyama <github@toriyama.dev>"]
+categories = ["compilers"]
 edition = "2021"
-name = "torilang"
+license = "MIT"
+name = "tori-lang"
+repository = "https://github.com/YUUKIToriyama/tori-lang"
 version = "0.1.0"
 
 [lib]
