@@ -29,28 +29,30 @@ pub struct Lexer {
 
 impl Lexer {
     pub fn new(input: &str) -> Lexer {
-        let current = input.chars().nth(0).unwrap();
         Lexer {
             input: input.to_string(),
             position: 0,
-            current_character: current,
+            current_character: '\0',
         }
     }
 
     pub fn has_next(&self) -> bool {
-        self.position + 1 < self.input.len()
+        self.position + 1 <= self.input.len()
     }
 
-    pub fn read_next(&mut self) {
+    pub fn read_next(&mut self) -> Result<(), &str> {
         if self.has_next() {
-            self.current_character = self.input.chars().nth(self.position + 1).unwrap();
+            self.current_character = self.input.chars().nth(self.position).unwrap();
+            self.position = self.position + 1;
+            Ok(())
+        } else {
+            Err("This is the end of input")
         }
-        self.position = self.position + 1;
     }
 
     fn peek_next(&self) -> Option<char> {
         if self.has_next() {
-            let next_character = self.input.chars().nth(self.position + 1).unwrap();
+            let next_character = self.input.chars().nth(self.position).unwrap();
             Some(next_character)
         } else {
             None
@@ -58,13 +60,23 @@ impl Lexer {
     }
 
     pub fn get_next_token(&mut self) -> Token {
-        while self.current_character.is_whitespace() {
-            self.read_next()
+        // 一文字読み込む
+        match self.read_next() {
+            Ok(()) => (),
+            Err(_) => return Token::new(TokenType::EOF, "".to_string()),
         }
-        let token = match self.current_character {
+        // 空白文字を読み飛ばす
+        while self.current_character.is_whitespace() {
+            match self.read_next() {
+                Ok(()) => (),
+                Err(_) => return Token::new(TokenType::EOF, "".to_string()),
+            }
+        }
+        // トークンを決定する
+        match self.current_character {
             '=' => match self.peek_next() {
                 Some('=') => {
-                    self.read_next();
+                    self.read_next().unwrap();
                     Token::new(TokenType::EQ, "==".to_string())
                 }
                 Some(_) => Token::new(TokenType::ASSIGN, "=".to_string()),
@@ -74,7 +86,7 @@ impl Lexer {
             '-' => Token::new(TokenType::MINUS, "-".to_string()),
             '!' => match self.peek_next() {
                 Some('=') => {
-                    self.read_next();
+                    self.read_next().unwrap();
                     Token::new(TokenType::NOTEQ, "!=".to_string())
                 }
                 Some(_) => Token::new(TokenType::BANG, "!".to_string()),
@@ -93,14 +105,13 @@ impl Lexer {
             other => {
                 if is_letter(other) {
                     let mut pending: Vec<char> = vec![];
-                    while is_letter(self.current_character) {
+                    loop {
                         pending.push(self.current_character);
                         match self.peek_next() {
                             None => break,
                             Some(v) => {
                                 if is_letter(v) {
-                                    self.read_next();
-                                    continue;
+                                    self.read_next().unwrap();
                                 } else {
                                     break;
                                 }
@@ -112,14 +123,13 @@ impl Lexer {
                     Token::new(token_type, literal)
                 } else if is_digit(other) {
                     let mut pending: Vec<char> = vec![];
-                    while is_digit(self.current_character) {
+                    loop {
                         pending.push(self.current_character);
                         match self.peek_next() {
                             None => break,
                             Some(v) => {
                                 if is_digit(v) {
-                                    self.read_next();
-                                    continue;
+                                    self.read_next().unwrap();
                                 } else {
                                     break;
                                 }
@@ -132,22 +142,13 @@ impl Lexer {
                     Token::new(TokenType::ILLEGAL, other.to_string())
                 }
             }
-        };
-        self.read_next();
-        token
+        }
     }
 }
 
 #[cfg(test)]
 mod tests_for_lexer {
     use crate::lexer::{Lexer, TokenType};
-
-    #[test]
-    fn test_new() {
-        let lexer = Lexer::new("=;(),+{}");
-        assert_eq!(lexer.position, 0);
-        assert_eq!(lexer.current_character, '=');
-    }
 
     #[test]
     fn test_get_next_token() {
