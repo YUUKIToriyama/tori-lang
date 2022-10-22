@@ -21,6 +21,10 @@ pub enum TokenType {
     LBRACE,    // 左波括弧
     RBRACE,    // 右波括弧
 
+    // 2文字トークン
+    EQ,    // 等価演算子
+    NOTEQ, // 非等価演算子
+
     // キーワード
     FUNCTION, // 関数キーワード
     LET,      // 変数宣言キーワード

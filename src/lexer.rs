@@ -64,10 +64,26 @@ impl Lexer {
             self.read_next()
         }
         let token = match self.current_character {
-            '=' => Token::new(TokenType::ASSIGN, "=".to_string()),
+            '=' => {
+                self.read_next();
+                if self.current_character == '=' {
+                    Token::new(TokenType::EQ, "==".to_string())
+                } else {
+                    self.back_to_prev();
+                    Token::new(TokenType::ASSIGN, "=".to_string())
+                }
+            }
             '+' => Token::new(TokenType::PLUS, "+".to_string()),
             '-' => Token::new(TokenType::MINUS, "-".to_string()),
-            '!' => Token::new(TokenType::BANG, "!".to_string()),
+            '!' => {
+                self.read_next();
+                if self.current_character == '=' {
+                    Token::new(TokenType::NOTEQ, "!=".to_string())
+                } else {
+                    self.back_to_prev();
+                    Token::new(TokenType::BANG, "!".to_string())
+                }
+            }
             '*' => Token::new(TokenType::ASTERISK, "*".to_string()),
             '/' => Token::new(TokenType::SLASH, "/".to_string()),
             '<' => Token::new(TokenType::LT, "<".to_string()),
@@ -229,5 +245,33 @@ mod tests_for_lexer {
         assert_eq!(token.token_type, TokenType::SEMICOLON);
         token = lexer.get_next_token();
         assert_eq!(token.token_type, TokenType::RBRACE);
+    }
+
+    #[test]
+    fn test_2文字トークン_等価演算子() {
+        let mut lexer = Lexer::new("a == 3;");
+        let mut token = lexer.get_next_token();
+        assert_eq!(token.literal, "a");
+        assert_eq!(token.token_type, TokenType::IDENT);
+        token = lexer.get_next_token();
+        assert_eq!(token.literal, "==");
+        assert_eq!(token.token_type, TokenType::EQ);
+        token = lexer.get_next_token();
+        assert_eq!(token.literal, "3");
+        assert_eq!(token.token_type, TokenType::INT);
+    }
+
+    #[test]
+    fn test_2文字トークン_非等価演算子() {
+        let mut lexer = Lexer::new("a != 3;");
+        let mut token = lexer.get_next_token();
+        assert_eq!(token.literal, "a");
+        assert_eq!(token.token_type, TokenType::IDENT);
+        token = lexer.get_next_token();
+        assert_eq!(token.literal, "!=");
+        assert_eq!(token.token_type, TokenType::NOTEQ);
+        token = lexer.get_next_token();
+        assert_eq!(token.literal, "3");
+        assert_eq!(token.token_type, TokenType::INT);
     }
 }
