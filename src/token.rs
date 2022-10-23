@@ -1,4 +1,4 @@
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub enum TokenType {
     ILLEGAL, // 未知のトークン
     EOF,     // ファイル終端
@@ -35,7 +35,7 @@ pub enum TokenType {
     RETURN,   // return
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Token {
     pub token_type: TokenType,
     pub literal: String,

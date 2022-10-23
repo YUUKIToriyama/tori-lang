@@ -15,4 +15,6 @@ pub struct Identifier {
 }
 
 /// 式
-pub struct Expression {}
+pub struct Expression {
+    pub tokens: Vec<Token>,
+}
