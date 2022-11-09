@@ -1,4 +1,5 @@
-use crate::ast::{Expression, Identifier};
+use crate::ast::{Expression, Identifier, IntegerLiteral, Statement};
+
 use crate::{
     ast::LetStatement,
     lexer::Lexer,
@@ -32,12 +33,46 @@ impl Parser {
         }
     }
 
+    fn parse_statement(&mut self) -> Statement {
+        match self.current_token.token_type {
+            TokenType::LET => Statement::LetStatement(self.parse_let_statement().unwrap()),
+            _ => todo!(),
+        }
+    }
+
+    fn parse_integer_literal(&self) -> IntegerLiteral {
+        let literal = self.current_token.literal.clone();
+        let mut num: u32 = 0;
+        for i in 0..literal.len() {
+            let exponent = (literal.len() - i - 1) as u32;
+            let base: i32 = 10;
+            let digit: u32 = match literal.chars().nth(i).unwrap() {
+                '1' => 1,
+                '2' => 2,
+                '3' => 3,
+                '4' => 4,
+                '5' => 5,
+                '6' => 6,
+                '7' => 7,
+                '8' => 8,
+                '9' => 9,
+                _ => 0,
+            };
+            num = num + digit * base.pow(exponent) as u32;
+        }
+        IntegerLiteral {
+            token_type: TokenType::INT,
+            value: num,
+        }
+    }
+
     fn parse_let_statement(&mut self) -> Result<LetStatement, &str> {
         if self.next_token.token_type != TokenType::IDENT {
             return Err("letキーワードの直後に識別子がありません");
         }
         let identifier = Identifier {
-            label: self.next_token.literal.clone(),
+            token_type: TokenType::IDENT,
+            value: self.next_token.literal.clone(),
         };
         self.read_next().unwrap();
         if self.next_token.token_type != TokenType::ASSIGN {
@@ -51,32 +86,44 @@ impl Parser {
                 break;
             }
         }
-        let expression = Expression { tokens: tokens };
+        let expression = self.parse_integer_literal();
         Ok(LetStatement {
-            identifier: identifier,
-            expression: expression,
+            token_type: TokenType::LET,
+            identifier,
+            expression: Expression::IntegerLiteral(expression),
         })
     }
 }
 
 #[cfg(test)]
 mod parser_test {
+    use crate::ast::{Expression, IntegerLiteral};
     use crate::lexer::Lexer;
     use crate::parser::Parser;
-    use crate::token::{Token, TokenType};
+    use crate::token::TokenType;
 
     #[test]
     fn let_statement_test() {
         let lexer = Lexer::new("let x = 10;");
         let mut parser = Parser::new(lexer);
         let statement = parser.parse_let_statement().unwrap();
-        assert_eq!(statement.identifier.label, "x");
+        assert_eq!(statement.token_type, TokenType::LET);
+        assert_eq!(statement.identifier.value, "x".to_string());
         assert_eq!(
-            statement.expression.tokens[0],
-            Token {
+            statement.expression,
+            Expression::IntegerLiteral(IntegerLiteral {
                 token_type: TokenType::INT,
-                literal: "10".to_string()
-            }
-        )
+                value: 10
+            })
+        );
+    }
+
+    #[test]
+    fn parse_integer_literal() {
+        let lexer = Lexer::new("123");
+        let parser = Parser::new(lexer);
+        let literal = parser.parse_integer_literal();
+        assert_eq!(literal.token_type, TokenType::INT);
+        assert_eq!(literal.value, 123);
     }
 }

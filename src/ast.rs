@@ -1,20 +1,43 @@
-use crate::token::Token;
+use crate::token::TokenType;
 
-pub trait Statement {}
+/// プログラム
+pub struct Program {
+    pub statements: Vec<Statement>,
+}
+
+/// 文
+pub enum Statement {
+    LetStatement(LetStatement),
+    ExpressionStatement(ExpressionStatement),
+}
 
 // let文
 pub struct LetStatement {
+    pub token_type: TokenType,
     pub identifier: Identifier,
     pub expression: Expression,
 }
-impl Statement for LetStatement {}
+
+/// 式
+#[derive(Debug, PartialEq)]
+pub enum Expression {
+    IntegerLiteral(IntegerLiteral),
+}
+
+/// 整数リテラル
+#[derive(Debug, PartialEq)]
+pub struct IntegerLiteral {
+    pub token_type: TokenType,
+    pub value: u32,
+}
+
+/// 式文
+pub struct ExpressionStatement {
+    pub expression: Expression,
+}
 
 /// 識別子
 pub struct Identifier {
-    pub label: String,
-}
-
-/// 式
-pub struct Expression {
-    pub tokens: Vec<Token>,
+    pub token_type: TokenType,
+    pub value: String,
 }
