@@ -4,7 +4,9 @@ use wasm_bindgen::JsValue;
 use crate::lexer::Lexer;
 use crate::token::TokenType;
 
+pub mod ast;
 pub mod lexer;
+pub mod parser;
 pub mod repl;
 pub mod token;
 
