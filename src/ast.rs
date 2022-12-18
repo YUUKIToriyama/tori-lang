@@ -8,6 +8,7 @@ pub struct Program {
 /// 文
 pub enum Statement {
     LetStatement(LetStatement),
+    ReturnStatement(ReturnStatement),
     ExpressionStatement(ExpressionStatement),
 }
 
@@ -15,6 +16,12 @@ pub enum Statement {
 pub struct LetStatement {
     pub token_type: TokenType,
     pub identifier: Identifier,
+    pub expression: Expression,
+}
+
+// Return文
+pub struct ReturnStatement {
+    pub token_type: TokenType,
     pub expression: Expression,
 }
 

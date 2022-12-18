@@ -1,4 +1,4 @@
-use crate::ast::{Expression, Identifier, IntegerLiteral, Statement};
+use crate::ast::{Expression, Identifier, IntegerLiteral, ReturnStatement, Statement};
 
 use crate::{
     ast::LetStatement,
@@ -36,6 +36,7 @@ impl Parser {
     fn parse_statement(&mut self) -> Statement {
         match self.current_token.token_type {
             TokenType::LET => Statement::LetStatement(self.parse_let_statement().unwrap()),
+            TokenType::RETURN => Statement::ReturnStatement(self.parse_return_statement().unwrap()),
             _ => todo!(),
         }
     }
@@ -93,6 +94,24 @@ impl Parser {
             expression: Expression::IntegerLiteral(expression),
         })
     }
+
+    fn parse_return_statement(&mut self) -> Result<ReturnStatement, &str> {
+        if self.next_token.token_type == TokenType::SEMICOLON {
+            return Err("返り値を指定してください");
+        }
+        loop {
+            if self.next_token.token_type != TokenType::SEMICOLON {
+                self.read_next().unwrap();
+            } else {
+                break;
+            }
+        }
+        let expression = self.parse_integer_literal();
+        Ok(ReturnStatement {
+            token_type: TokenType::RETURN,
+            expression: Expression::IntegerLiteral(expression),
+        })
+    }
 }
 
 #[cfg(test)]
@@ -109,6 +128,21 @@ mod parser_test {
         let statement = parser.parse_let_statement().unwrap();
         assert_eq!(statement.token_type, TokenType::LET);
         assert_eq!(statement.identifier.value, "x".to_string());
+        assert_eq!(
+            statement.expression,
+            Expression::IntegerLiteral(IntegerLiteral {
+                token_type: TokenType::INT,
+                value: 10
+            })
+        );
+    }
+
+    #[test]
+    fn return_statement_test() {
+        let lexer = Lexer::new("return 10;");
+        let mut parser = Parser::new(lexer);
+        let statement = parser.parse_return_statement().unwrap();
+        assert_eq!(statement.token_type, TokenType::RETURN);
         assert_eq!(
             statement.expression,
             Expression::IntegerLiteral(IntegerLiteral {
