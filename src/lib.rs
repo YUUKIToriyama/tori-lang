@@ -6,6 +6,7 @@ use crate::token::TokenType;
 
 pub mod ast;
 pub mod lexer;
+pub mod operator;
 pub mod parser;
 pub mod repl;
 pub mod token;
