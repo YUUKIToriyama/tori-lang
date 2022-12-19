@@ -1,3 +1,4 @@
+use crate::operator::Operator;
 use crate::token::TokenType;
 
 /// プログラム
@@ -29,6 +30,8 @@ pub struct ReturnStatement {
 #[derive(Debug, PartialEq)]
 pub enum Expression {
     IntegerLiteral(IntegerLiteral),
+    PrefixExpression(PrefixExpression),
+    InfixExpression(InfixExpression),
 }
 
 /// 整数リテラル
@@ -36,6 +39,21 @@ pub enum Expression {
 pub struct IntegerLiteral {
     pub token_type: TokenType,
     pub value: u32,
+}
+
+/// 前置演算式
+#[derive(Debug, PartialEq)]
+pub struct PrefixExpression {
+    pub operator: Operator,
+    pub right: Box<Expression>,
+}
+
+/// 中置演算式
+#[derive(Debug, PartialEq)]
+pub struct InfixExpression {
+    pub operator: Operator,
+    pub right: Box<Expression>,
+    pub left: Box<Expression>,
 }
 
 /// 式文
