@@ -29,16 +29,10 @@ pub struct ReturnStatement {
 /// 式
 #[derive(Debug, PartialEq)]
 pub enum Expression {
-    IntegerLiteral(IntegerLiteral),
+    /// 整数リテラル
+    IntegerLiteral(u32),
     PrefixExpression(PrefixExpression),
     InfixExpression(InfixExpression),
-}
-
-/// 整数リテラル
-#[derive(Debug, PartialEq)]
-pub struct IntegerLiteral {
-    pub token_type: TokenType,
-    pub value: u32,
 }
 
 /// 前置演算式
