@@ -1,4 +1,4 @@
-use crate::ast::{Expression, Identifier, IntegerLiteral, ReturnStatement, Statement};
+use crate::ast::{Expression, Identifier, ReturnStatement, Statement};
 
 use crate::{
     ast::LetStatement,
@@ -41,7 +41,7 @@ impl Parser {
         }
     }
 
-    fn parse_integer_literal(&self) -> IntegerLiteral {
+    fn parse_integer_literal(&self) -> u32 {
         let literal = self.current_token.literal.clone();
         let mut num: u32 = 0;
         for i in 0..literal.len() {
@@ -61,10 +61,7 @@ impl Parser {
             };
             num = num + digit * base.pow(exponent) as u32;
         }
-        IntegerLiteral {
-            token_type: TokenType::INT,
-            value: num,
-        }
+        num
     }
 
     fn parse_let_statement(&mut self) -> Result<LetStatement, &str> {
@@ -116,23 +113,25 @@ impl Parser {
 
 #[cfg(test)]
 mod parser_test {
-    use crate::ast::{Expression, IntegerLiteral};
+    use crate::ast::{Expression, InfixExpression};
     use crate::lexer::Lexer;
+    use crate::operator::Operator;
     use crate::parser::Parser;
     use crate::token::TokenType;
 
     #[test]
     fn let_statement_test() {
-        let lexer = Lexer::new("let x = 10;");
+        let lexer = Lexer::new("let x = 1 + 2;");
         let mut parser = Parser::new(lexer);
         let statement = parser.parse_let_statement().unwrap();
         assert_eq!(statement.token_type, TokenType::LET);
         assert_eq!(statement.identifier.value, "x".to_string());
         assert_eq!(
             statement.expression,
-            Expression::IntegerLiteral(IntegerLiteral {
-                token_type: TokenType::INT,
-                value: 10
+            Expression::InfixExpression(InfixExpression {
+                operator: Operator::PLUS,
+                left: Box::new(Expression::IntegerLiteral(1)),
+                right: Box::new(Expression::IntegerLiteral(2)),
             })
         );
     }
@@ -143,13 +142,7 @@ mod parser_test {
         let mut parser = Parser::new(lexer);
         let statement = parser.parse_return_statement().unwrap();
         assert_eq!(statement.token_type, TokenType::RETURN);
-        assert_eq!(
-            statement.expression,
-            Expression::IntegerLiteral(IntegerLiteral {
-                token_type: TokenType::INT,
-                value: 10
-            })
-        );
+        assert_eq!(statement.expression, Expression::IntegerLiteral(10),);
     }
 
     #[test]
@@ -157,7 +150,6 @@ mod parser_test {
         let lexer = Lexer::new("123");
         let parser = Parser::new(lexer);
         let literal = parser.parse_integer_literal();
-        assert_eq!(literal.token_type, TokenType::INT);
-        assert_eq!(literal.value, 123);
+        assert_eq!(literal, 123);
     }
 }
